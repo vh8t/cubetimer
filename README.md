@@ -36,8 +36,8 @@ Cubetimer is a lightweight and command-line-based speedcubing timer designed for
     - Press `Enter` to start the timer.
     - Press `Enter` again to stop the timer and view your solve time.
     - You can then press `Enter` to generate a new scramble for the next solve.
-- **Viewing your top 5 solves:**
-    - After completing a solve, instead of pressing `Enter` to generate a new scramble, type `lb` and press `Enter` to view your top 5 runs from the `times.json` file.
+- **Commands:**
+    - After completing a solve, instead of pressing `Enter` to generate a new scramble, type `help` and press `Enter` to view the help menu with all commands.
 - **Exiting the application:**
     - Press a designated key `Ctrl+C` to exit the application.
 
