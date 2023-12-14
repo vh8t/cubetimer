@@ -11,14 +11,18 @@ modifiers = ['', '', '\'', '2']
 GREEN = '\033[32m'
 WOB = '\033[7m'
 BLUE = '\033[34m'
+RED = '\033[31m'
 RESET = '\033[0m'
 
 
 def generate(amount: int) -> list:
     moves = choices(sides, k=amount)
     for i, side in enumerate(moves):
-        while moves[i - 1] == side:
-            moves[i - 1] = choice(sides)
+        if moves[i - 1] == side:
+            new_side = choice(sides)
+            while new_side == side:
+                new_side = choice(sides)
+            moves[i] = new_side
     for i in range(len(moves)):
         moves[i] += choice(modifiers)
     return moves
@@ -35,6 +39,58 @@ def formatted_to_seconds(formatted: str) -> float:
     minutes = int(minutes)
     seconds = float(seconds)
     return minutes * 60 + seconds
+
+
+def help() -> None:
+    os.system('cls' if os.name == 'nt' else 'clear')
+    true = True
+    while true:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f'{GREEN}Help{RESET}\n\n{BLUE}lb{RESET} - show top 5 times\n{BLUE}avg{RESET} - show average of all times\n{BLUE}avg5{RESET} - show average of last 5 times\n{BLUE}avg12{RESET} - show average of last 12 times\n{BLUE}help{RESET} - show this help\n{BLUE}exit{RESET} - exit help\n')
+        cmd = input(f'{GREEN}Command >{RESET} ')
+        if cmd == 'exit':
+            os.system('cls' if os.name == 'nt' else 'clear')
+            true = False
+        elif cmd == 'avg':
+            os.system('cls' if os.name == 'nt' else 'clear')
+            with open('times.json', 'r') as file:
+                data = load(file)
+            print(f'Average: {BLUE}{round(sum([formatted_to_seconds(time["f_time"]) for time in data]) / len(data), 3)}{RESET}')
+            while input(f'\nPress {GREEN}enter{RESET} to continue') != '':
+                pass
+        elif cmd == 'avg5':
+            os.system('cls' if os.name == 'nt' else 'clear')
+            with open('times.json', 'r') as file:
+                data = load(file)
+            last_five = sorted(data, key=lambda x: x['timestamp'])[-5:]
+            for i, time in enumerate(last_five):
+                print(f'{BLUE}{i + 1}.{RESET} {time["f_time"]} - {GREEN}{time["scramble"]}{RESET}')
+            print(f'\nAverage: {BLUE}{round(sum([formatted_to_seconds(time["f_time"]) for time in last_five]) / len(last_five), 3)}{RESET}')
+            while input(f'\nPress {GREEN}enter{RESET} to continue') != '':
+                pass
+        elif cmd == 'avg12':
+            os.system('cls' if os.name == 'nt' else 'clear')
+            with open('times.json', 'r') as file:
+                data = load(file)
+            last_twelve = sorted(data, key=lambda x: x['timestamp'])[-12:]
+            for i, time in enumerate(last_twelve):
+                print(f'{BLUE}{i + 1}.{RESET} {time["f_time"]} - {GREEN}{time["scramble"]}{RESET}')
+            print(f'\nAverage: {BLUE}{round(sum([formatted_to_seconds(time["f_time"]) for time in last_twelve]) / len(last_twelve), 3)}{RESET}')
+            while input(f'\nPress {GREEN}enter{RESET} to continue') != '':
+                pass
+        elif cmd == 'lb':
+            os.system('cls' if os.name == 'nt' else 'clear')
+            with open('times.json', 'r') as file:
+                data = load(file)
+            for i, time in enumerate(sorted(data, key=lambda x: x['time'])[:5]):
+                print(f'{BLUE}{i + 1}.{RESET} {time["f_time"]} - {GREEN}{time["scramble"]}{RESET}')
+            while input(f'\nPress {GREEN}enter{RESET} to continue') != '':
+                pass
+        elif cmd == 'help':
+            os.system('cls' if os.name == 'nt' else 'clear')
+        else:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(f'{RED}Invalid command: {cmd}{RESET}')
 
 
 def main() -> None:
@@ -66,7 +122,7 @@ def main() -> None:
             sleep(0.01)
 
         os.system('cls' if os.name == 'nt' else 'clear')
-        print(f'{GREEN}{scramble}{RESET}\nType {BLUE}lb{RESET} to see your top 5 times or press {BLUE}enter{RESET} to continue\n\n{WOB}{formatted}{RESET}')
+        print(f'{GREEN}{scramble}{RESET}\nType {BLUE}help{RESET} to see more options or press {BLUE}enter{RESET} to continue\n\n{WOB}{formatted}{RESET}')
 
         with open('times.json', 'r') as file:
             data = load(file)
@@ -82,18 +138,11 @@ def main() -> None:
             dump(data, file, indent=2)
 
         go = input()
-        while go != '' and go != 'lb':
+        while go != '' and go != 'help' :
             go = input()
 
-        if go == 'lb':
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(f'{GREEN}{scramble}{RESET}\n{BLUE}Top 5 times{RESET}\n')
-            for i, time in enumerate(sorted(data, key=lambda x: x['time'])[:5]):
-                print(f'{i + 1}. {time["f_time"]} - {time["scramble"]}')
-
-            print(f'\nPress {BLUE}enter{RESET} to continue')
-            while input() != '':
-                pass
+        if go == 'help':
+            help()
 
 
 if __name__ == '__main__':
