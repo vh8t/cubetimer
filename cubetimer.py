@@ -119,7 +119,7 @@ def main() -> None:
             formatted = format_time(start_time, datetime.now())
             print(f'\r{WOB}{formatted}{RESET}', end='')
             sys.stdout.flush()
-            sleep(0.01)
+            sleep(0.001)
 
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f'{GREEN}{scramble}{RESET}\nType {BLUE}help{RESET} to see more options or press {BLUE}enter{RESET} to continue\n\n{WOB}{formatted}{RESET}')
